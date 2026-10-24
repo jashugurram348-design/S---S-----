@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SignSpeak | Sign Language Translator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Arial, sans-serif; color: white;
+      background: radial-gradient(circle at top left,#1748d8,#08072d 55%,#02051c);
+      min-height: 100vh;
+    }
+    nav {
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:15px; padding:18px 5%;
+      background:#1644c7aa; border-bottom:1px solid #8cbaff66;
+      backdrop-filter:blur(15px);
+    }
+    .logo { font-size:25px; font-weight:bold; }
+    .links { display:flex; flex-wrap:wrap; gap:8px; }
+    button, .links a {
+      color:white; border:1px solid #a7caff55;
+      border-radius:12px; padding:11px 15px;
+      background:#ffffff12; cursor:pointer; text-decoration:none;
+    }
+    .links a:hover, button:hover { background:#3d8aff66; }
+    .container { width:min(1150px,92%); margin:35px auto 60px; }
+    .hero { text-align:center; margin-bottom:28px; }
+    .badge { display:inline-block; padding:10px 18px; border-radius:30px;
+      background:#286bce66; border:1px solid #a8d9ff66; }
+    h1 { font-size:clamp(28px,4vw,42px); margin-bottom:8px; }
+    .muted { color:#cbdcff; }
+    .glass {
+      background:linear-gradient(135deg,#4e86ff55,#37c9e51c);
+      border:1px solid #b6d7ff66; border-radius:25px;
+      padding:25px; backdrop-filter:blur(20px);
+      box-shadow:0 15px 40px #0002;
+    }
+    .modes { display:flex; justify-content:center; gap:10px; margin:25px 0; }
+    .modes button.active { background:#83f7ff; color:#07325b; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+    h3 { font-size:15px; }
+    textarea {
+      width:100%; height:190px; resize:vertical; padding:17px;
+      border-radius:17px; border:1px solid #c1d7ff88;
+      background:#dbe8ff30; color:white; font-size:16px; outline:none;
+    }
+    textarea::placeholder { color:#eef4ff; }
+    .output {
+      min-height:190px; padding:20px; border-radius:17px;
+      background:#dbe8ff30; border:1px solid #c1d7ff88;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center; white-space:pre-wrap; overflow-wrap:anywhere;
+    }
+    .quick { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .quick button { padding:8px 12px; border-radius:22px; font-size:13px; }
+    .primary {
+      display:block; margin:25px auto 0; padding:15px 35px;
+      background:linear-gradient(90deg,#8bffff,#1de7c9);
+      color:#06375a; font-weight:bold; border:0; border-radius:30px;
+      box-shadow:0 0 25px #28edec55;
+    }
+    .features { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:28px; }
+    .feature-icon { font-size:25px; }
+    .feature p { color:#d6e4ff; line-height:1.6; }
+    .page { display:none; }
+    .page.active { display:block; }
+    .dictionary { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; }
+    .sign { text-align:center; cursor:pointer; }
+    .sign span { font-size:30px; display:block; margin-bottom:8px; }
+    .search { width:100%; padding:14px; margin:20px 0; border-radius:14px; border:1px solid #a7caff66; background:#ffffff15; color:white; }
+    .lesson { margin:12px 0; }
+    .lesson label { display:block; padding:8px 0; }
+    .sos-button { width:150px; height:150px; border-radius:50%; background:#ff7bad; color:#51112e; font-size:24px; font-weight:bold; display:block; margin:25px auto; }
+    footer { padding:28px 5%; background:#1254b688; text-align:center; border-top:1px solid #ffffff22; }
+    @media(max-width:750px) {
+      .grid,.features { grid-template-columns:1fr; }
+      .dictionary { grid-template-columns:repeat(2,1fr); }
+      .glass { padding:18px; }
+      nav { align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">✋ SignSpeak</div>
+  <div class="links">
+    <a href="#translate" data-page="translate">Translate</a>
+    <a href="#dictionary" data-page="dictionary">Dictionary</a>
+    <a href="#history" data-page="history">History</a>
+    <a href="#learn" data-page="learn">Learn</a>
+    <a href="#sos" data-page="sos">SOS</a>
+  </div>
+</nav>
+
+<main class="container">
+
+  <section class="page active" id="translate">
+    <header class="hero">
+      <span class="badge">✧ AI-Powered Translation</span>
+      <h1>Sign Language Translator</h1>
+      <p class="muted">Connect with everyone through SignSpeak</p>
+    </header>
+
+    <div class="modes">
+      <button id="textMode" class="active">T Text to Sign</button>
+      <button id="signMode">✋ Sign to Text</button>
+      <button id="swapMode" aria-label="Switch mode">⇄</button>
+    </div>
+
+    <div class="glass">
+      <div class="grid">
+        <div id="inputPanel">
+          <h3>TYPE YOUR TEXT</h3>
+          <textarea id="userText" placeholder="Type something to translate into sign language..."></textarea>
+          <div class="quick">
+            <button>Hello</button>
+            <button>Thank you</button>
+            <button>I love you</button>
+            <button>How are you</button>
+            <button>Good morning</button>
+          </div>
+        </div>
+        <div>
+          <h3 id="outputTitle">SIGN TRANSLATION</h3>
+          <div class="output" id="result">
+            <div><span style="font-size:42px">✋</span><br>Translation will appear here</div>
+          </div>
+        </div>
+      </div>
+      <button class="primary" id="translateBtn">✧ Translate</button>
+    </div>
+
+    <div class="features">
+      <article class="glass">
+        <div class="feature-icon">📹</div>
+        <h3>Real-Time Detection</h3>
+        <p>Recognize signs from a camera feed when a sign-recognition model is connected.</p>
+      </article>
+      <article class="glass">
+        <div class="feature-icon">✨</div>
+        <h3>AI Translation</h3>
+        <p>Prepare text for sign-language translation and learning.</p>
+      </article>
+      <article class="glass">
+        <div class="feature-icon">🔊</div>
+        <h3>Voice Output</h3>
+        <p>Listen to text using your browser's built-in speech feature.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="page" id="dictionary">
+    <header class="hero">
+      <h1>Sign Dictionary</h1>
+      <p class="muted">Explore common signs, letters, numbers and phrases.</p>
+    </header>
+    <input class="search" id="searchSign" placeholder="Search for a sign...">
+    <div class="dictionary" id="signList"></div>
+  </section>
+
+  <section class="page" id="history">
+    <header class="hero">
+      <h1>Translation History</h1>
+      <p class="muted">Your translations from this session.</p>
+    </header>
+    <div class="glass" id="historyList">No translations yet. Start translating to see your history.</div>
+  </section>
+
+  <section class="page" id="learn">
+    <header class="hero">
+      <h1>Learn Sign Language</h1>
+      <p class="muted">Learn at your own pace.</p>
+    </header>
+    <div class="glass">
+      <h3>Your Progress: <span id="progress">0%</span></h3>
+      <progress id="progressBar" value="0" max="100" style="width:100%"></progress>
+    </div>
+    <div class="glass lesson">
+      <h3>ASL Basics</h3>
+      <label><input type="checkbox" class="topic"> Understanding the ASL alphabet</label>
+      <label><input type="checkbox" class="topic"> Numbers 1–10</label>
+      <label><input type="checkbox" class="topic"> Basic greetings and introductions</label>
+      <label><input type="checkbox" class="topic"> Common everyday phrases</label>
+    </div>
+    <div class="glass lesson">
+      <h3>Practice and Fluency</h3>
+      <label><input type="checkbox" class="topic"> Practice introducing yourself</label>
+      <label><input type="checkbox" class="topic"> Practice a short conversation</label>
+    </div>
+  </section>
+
+  <section class="page" id="sos">
+    <header class="hero">
+      <span class="badge">🚨 Emergency support</span>
+      <h1>Emergency SOS</h1>
+      <p class="muted">Prepare an emergency alert preview.</p>
+    </header>
+    <div class="glass" style="text-align:center">
+      <p>Select emergency type</p>
+      <select id="emergencyType" class="search">
+        <option>General</option>
+        <option>Medical</option>
+        <option>Fire</option>
+        <option>Police</option>
+      </select>
+      <input id="sosMessage" class="search" placeholder="Optional message for your alert">
+      <button class="sos-button" id="sosBtn">SOS</button>
+      <p id="sosResult" class="muted">No alert has been sent.</p>
+      <p class="muted">This demo does not contact emergency services.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <strong>✋ SignSpeak</strong>
+  <p>Built with ♥ for accessible communication</p>
+</footer>
+
+<script>
+const pages = document.querySelectorAll(".page");
+
+document.querySelectorAll("[data-page]").forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    pages.forEach(page => page.classList.toggle("active", page.id === link.dataset.page));
+    window.scrollTo({top: 0, behavior: "smooth"});
+  });
+});
+
+let mode = "text";
+const userText = document.getElementById("userText");
+const result = document.getElementById("result");
+const inputPanel = document.getElementById("inputPanel");
+
+function setMode(next) {
+  mode = next;
+  document.getElementById("textMode").classList.toggle("active", next === "text");
+  document.getElementById("signMode").classList.toggle("active", next === "sign");
+  inputPanel.style.display = next === "text" ? "block" : "none";
+  document.getElementById("outputTitle").textContent =
+    next === "text" ? "SIGN TRANSLATION" : "TEXT OUTPUT";
+  document.getElementById("translateBtn").textContent =
+    next === "text" ? "✧ Translate" : "✧ Start Camera";
+  result.textContent = next === "text"
+    ? "Translation will appear here"
+    : "Camera sign recognition requires a trained model.";
+}
+document.getElementById("textMode").onclick = () => setMode("text");
+document.getElementById("signMode").onclick = () => setMode("sign");
+document.getElementById("swapMode").onclick = () => setMode(mode === "text" ? "sign" : "text");
+
+const history = [];
+function translate() {
+  if (mode === "sign") {
+    result.textContent = "Camera recognition is not connected. Add a trained sign-recognition model to enable this feature.";
+    return;
+  }
+  const text = userText.value.trim();
+  if (!text) {
+    result.textContent = "Please type something first.";
+    return;
+  }
+  result.textContent = "🤟\n" + text + "\n\nLearning preview — animated sign translation is not connected.";
+  history.unshift(text);
+  document.getElementById("historyList").textContent = history.join("\n\n");
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
+}
+document.getElementById("translateBtn").onclick = translate;
+
+document.querySelectorAll(".quick button").forEach(button => {
+  button.onclick = () => {
+    userText.value = button.textContent;
+    setMode("text");
+    translate();
+  };
+});
+
+const signs = [
+  ["👋","Hello","Greetings"],["👋","Goodbye","Greetings"],
+  ["🙏","Thank You","Greetings"],["🤲","Please","Greetings"],
+  ... "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(letter => ["✋", letter, "Alphabet"]),
+  ... Array.from({length:10}, (_,i) => ["☝️", String(i+1), "Numbers"]),
+  ["🤟","I Love You","Phrases"],["🤝","How Are You","Phrases"],
+  ["🆘","Help","Phrases"],["✅","Yes","Phrases"],["🚫","No","Phrases"],
+  ["💧","Water","Common"],["🏠","Home","Common"],
+  ["🙂","Happy","Emotions"],["😢","Sad","Emotions"],["😠","Angry","Emotions"]
+];
+const signList = document.getElementById("signList");
+function renderSigns(query = "") {
+  const matches = signs.filter(sign => sign[1].toLowerCase().includes(query.toLowerCase()));
+  signList.innerHTML = "";
+  matches.forEach(([emoji, word, category]) => {
+    const card = document.createElement("article");
+    card.className = "glass sign";
+    card.innerHTML = `<span>${emoji}</span><strong>${word}</strong><p class="muted">${category}</p>`;
+    card.onclick = () => {
+      userText.value = word;
+      setMode("text");
+      pages.forEach(page => page.classList.toggle("active", page.id === "translate"));
+      window.scrollTo({top:0,behavior:"smooth"});
+    };
+    signList.appendChild(card);
+  });
+}
+document.getElementById("searchSign").addEventListener("input", e => renderSigns(e.target.value));
+renderSigns();
+
+function updateProgress() {
+  const topics = [...document.querySelectorAll(".topic")];
+  const checked = topics.filter(topic => topic.checked).length;
+  const percentage = Math.round(checked / topics.length * 100);
+  document.getElementById("progress").textContent = percentage + "%";
+  document.getElementById("progressBar").value = percentage;
+}
+document.querySelectorAll(".topic").forEach(topic => topic.addEventListener("change", updateProgress));
+
+document.getElementById("sosBtn").onclick = () => {
+  const type = document.getElementById("emergencyType").value;
+  const message = document.getElementById("sosMessage").value.trim();
+  document.getElementById("sosResult").textContent =
+    `Preview only — Type: ${type}. Message: ${message || "None"}. No alert was sent. Contact local emergency services directly if needed.`;
+};
+</script>
+</body>
+</html>

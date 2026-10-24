@@ -1,0 +1,32 @@
+
+Flask
+Flask-Cors
+Flask-SQLAlchemy
+python-dotenv
+deep-translator
+SpeechRecognition
+pyttsx3
+opencv-python
+mediapipe
+PyAudio
+
+python -m pip install -r requirements.txt
+
+SignSpeak/
+└── backend/
+    ├── app.py
+    ├── __init__.py
+    ├── config.py
+    ├── database.py
+    ├── models.py
+    ├── helpers.py
+    ├── translate.py
+    ├── translation_service.py
+    ├── speech_service.py
+    ├── sign_detection.py
+    ├── dictionary.py
+    ├── history.py
+    ├── learn.py
+    ├── sos.py
+    ├── .env.example
+    └── requirements.txt
